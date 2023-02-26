@@ -20,7 +20,7 @@ func NewClient(databasePath string) Client {
 	}
 }
 
-func createDatabase(c Client) error {
+func (c Client) createDatabase() error {
 	dat, err := json.Marshal(databaseSchema{
 		Users: make(map[string]User),
 		Posts: make(map[string]Post),
@@ -35,10 +35,32 @@ func createDatabase(c Client) error {
 	return nil
 }
 
-func ensureDatabase(c Client) error {
+func (c Client) ensureDatabase() error {
 	_, err := os.ReadFile(c.databasePath)
 	if errors.Is(err, os.ErrNotExist) {
-		return createDatabase(c)
+		return c.createDatabase()
 	}
 	return err
+}
+
+func (c Client) updateDatabase(db databaseSchema) error {
+	data, err := json.Marshal(db)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(c.databasePath, data, 0600)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c Client) readDatabase() (databaseSchema, error) {
+	data, err := os.ReadFile(c.databasePath)
+	if err != nil {
+		return databaseSchema{}, err
+	}
+	db := databaseSchema{}
+	err = json.Unmarshal(data, &db)
+	return db, err
 }
