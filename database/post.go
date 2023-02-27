@@ -24,7 +24,7 @@ func (c Client) CreatePost(userEmail, text string) (Post, error) {
 	}
 	post := Post{
 		ID:        uuid.New().String(),
-		CreatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
 		UserEmail: userEmail,
 		Text:      text,
 	}

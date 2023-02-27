@@ -22,7 +22,7 @@ func (c Client) CreateUser(email, password, name string, age int) (User, error) 
 		return User{}, errors.New("the user already exists")
 	}
 	user := User{
-		CreatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
 		Email:     email,
 		Password:  password,
 		Name:      name,
